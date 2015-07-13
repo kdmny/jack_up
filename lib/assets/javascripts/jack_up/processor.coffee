@@ -19,7 +19,8 @@ class @JackUp.Processor
 
   processFilesForEvent: (event) =>
     params = {}
-    _.map $(event.target).find("input"), (el) =>
+    $zone = $(event.target).closest(".file-drop")
+    _.map $zone.find("input"), (el) =>
       params[$(el).attr("name")] = $(el).val()
     _.each filesWithData(event), (file) =>
       reader = new FileReader()
@@ -28,7 +29,7 @@ class @JackUp.Processor
 
         if /^data:image/.test event.target.result
           image = $("<img>").attr("src", event.target.result)
-          @trigger 'upload:imageRenderReady', image: image, file: file
+          @trigger 'upload:imageRenderReady', image: image, file: file, zone: $zone
 
       reader.readAsDataURL(file)
 
@@ -36,6 +37,6 @@ class @JackUp.Processor
       @bubble 'upload:start', 'upload:success', 'upload:failure', 'upload:sentToServer', 'upload:percentComplete',
         from: fileUploader
 
-      fileUploader.upload file, params
+      fileUploader.upload file: file, params: params, zone: $zone
 
 _.extend JackUp.Processor.prototype, JackUp.Events

@@ -18,6 +18,9 @@ class @JackUp.Processor
     @uploadPath = options.path
 
   processFilesForEvent: (event) =>
+    params = {}
+    _.map $(event.target).find("input"), (el) =>
+      params[$(el).attr("name")] = $(el).val()
     _.each filesWithData(event), (file) =>
       reader = new FileReader()
       reader.onload = (event) =>
@@ -33,6 +36,6 @@ class @JackUp.Processor
       @bubble 'upload:start', 'upload:success', 'upload:failure', 'upload:sentToServer', 'upload:percentComplete',
         from: fileUploader
 
-      fileUploader.upload file
+      fileUploader.upload file, params
 
 _.extend JackUp.Processor.prototype, JackUp.Events
